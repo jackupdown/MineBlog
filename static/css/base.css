@@ -1,0 +1,31 @@
+.no-radius {
+    border-radius: 0 !important;
+}
+
+.container {
+    width: 90% !important;
+}
+
+
+.article-body img {
+    width: 100px;
+    height: 100px;
+    padding-right: 10px;
+}
+
+.article-body div {
+    margin-top: 20px;
+}
+
+.left {
+    float: left;
+}
+
+.article-footer {
+    margin-top: 10px;
+    margin-bottom: 50px;
+}
+
+.article-footer span {
+    margin-right: 20px;
+}

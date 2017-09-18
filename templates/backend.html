@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<link rel="stylesheet" href="/static/plugins/bootstrap-3.3.7-dist/css/bootstrap.css"/>
+	<link rel="stylesheet" href="/static/plugins/font-awesome-4.7.0/css/font-awesome.css"/>
+	<link rel="stylesheet" href="/static/css/commons.css"/>
+	{% block css %}{% endblock %}
+</head>
+<body>
+<div class="navbar navbar-inverse no-radius" role="navigation">
+	<div class="left">
+		<ul class="nav navbar-nav">
+			<li class="active"><a href="##">个人博客后台管理</a></li>
+			<ul class="nav navbar-nav" style="margin-left: 700px">
+				<li><img src="{{ loginerInfo.avatar }}" style="position: relative; width: 40px; height: 40px; top: 5px"></li>
+				<li><a href="##">{{ loginerInfo.userName }}</a></li>
+				<li><a href="##">{{ loginerInfo.nickName }}</a></li>
+
+			</ul>
+		</ul>
+	</div>
+</div>
+
+<div class="panel-group col-md-2 " id="accordion">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#panel1">个人信息管理</a></h4>
+		</div>
+		<div id="panel1" class="panel-collapse collapse">
+			<div class="panel-body">上传头像</div>
+			<div class="panel-body">基本资料</div>
+			<div class="panel-body">个人信息</div>
+			<div class="panel-body">联系方式</div>
+			<div class="panel-body">博客设置</div>
+			<div class="panel-body">账户设置</div>
+		</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#panel2">博客管理</a></h4>
+		</div>
+		<div id="panel2" class="panel-collapse collapse in">
+			<div class="panel-body"><a href="/article-0-0-0.html">文章筛选</a></div>
+			<div class="panel-body"><a onclick="article();">文章管理</a></div>
+			<div class="panel-body">文章分类</div>
+			<div class="panel-body">文章标签</div>
+			<div class="panel-body">评论</div>
+		</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#panel3">标题三</a></h4>
+		</div>
+		<div id="panel3" class="panel-collapse collapse">
+			<div class="panel-body">折叠区内容三</div>
+		</div>
+	</div>
+</div>
+
+{% block content %}{% endblock %}
+
+</body>
+<script src="/static/jquery-3.2.1.js"></script>
+<script src="/static/plugins/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+{% block js %}{% endblock %}
+</html>

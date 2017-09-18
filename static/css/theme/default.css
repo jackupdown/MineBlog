@@ -1,0 +1,130 @@
+.no-radius {
+    border-radius: 0 !important;
+}
+.navs {
+    float: right;
+    margin-right: 70px;
+}
+.container {
+    width: 100%;
+}
+
+.page-nav {
+    background-color: black;
+    height: 60px;
+    line-height: 60px;
+    overflow: hidden;
+    color: white;
+}
+.page-nav ul li {
+    float: left;
+    margin-left: 30px;
+    text-align: center;
+    font-size: 14px;
+    display: block;
+    width: 100px;
+}
+.page-nav ul li:hover li {
+    background-color: red;
+}
+.page-nav ul li a {
+    display: block;
+    padding: -10px 1.5em;
+    height: 60px;
+    font-family: '微软雅黑';
+    float: left;
+    font-size: 1.2em;
+    text-align: center;
+    transition-duration: 0.3s;
+    text-decoration: none;
+}
+
+.panel-body li {
+    list-style-type: none;
+    text-indent: 1em;
+    padding: 10px 5px;
+}
+#avatar img {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    top: 90px;
+    left: 150px;
+    opacity: 0.88;
+}
+
+.border li {
+    border-bottom: 1px solid #DADFE1;
+    border-top: 1px solid #FFFFFF;
+}
+
+.content {
+    margin-top: 30px;
+}
+
+.article-body div {
+    margin-top: 20px;
+}
+
+.article-content {
+    min-height: 100px;
+    margin-bottom: 100px;
+
+}
+
+.left {
+    float: left;
+}
+
+.article-footer {
+    margin-top: 10px;
+    margin-bottom: 50px;
+    border-bottom: solid 1px green;
+}
+
+.article-footer span {
+    margin-right: 20px;
+}
+
+.thumb div {
+    float: left;
+    height: 100px;
+    width: 100px
+}
+.content .col-md-8 .thumb p {
+    font-weight: bold;
+}
+.darkGrey {
+    color: darkgray;
+}
+.uped {
+    color: green;
+}
+.downed {
+    color: red;
+}
+.blogInfo {
+    border: dashed 1px gray;
+    padding: 8px;
+}
+.blogInfo span {
+    padding: 8px;
+}
+.nextArticle {
+    margin-top: 10px;
+}
+.comment-list, .submit-comment {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+.multiComments > div {
+    border-bottom: 1px solid #DADFE1;
+    margin-top: 30px;
+}
+.multiComments > div div {
+    border-top: 1px solid #DADFE1;
+    margin-top: 15px;
+}
+.border-2 {
+    border-top: 1px solid green;
+}

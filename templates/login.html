@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Login</title>
+	<link rel="stylesheet" href="/static/plugins/bootstrap-3.3.7-dist/css/bootstrap.css">
+</head>
+<body>
+<div style="width: 500px; margin: 100px auto">
+	<form class="form-horizontal" id="f1" method="post" action="/login/" novalidate>
+		{% csrf_token %}
+		<div class="form-group">
+			<label class="col-sm-2 control-label">用户名</label>
+			<div class="col-sm-10">
+				{#      <input type="text" class="form-control" placeholder="用户名" name="user">#}
+				{{ obj.user }}{{ obj.errors.user.0 }}
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="inputPassword3" class="col-sm-2 control-label">密码</label>
+			<div class="col-sm-10">
+				{#      <input type="password" class="form-control" id="inputPassword3" placeholder="密码" name="pwd">#}
+				{{ obj.pwd }}{{ obj.errors.pwd.0 }}
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">验证码</label>
+			<div class="col-sm-6">
+				{#      <input type="text" class="form-control" placeholder="验证码" name="code">#}
+				{{ obj.code }}{{ obj.errors.code.0 }}
+			</div>
+			<div class="col-sm-4">
+				<img onclick="changeImg(this);" src="/check-code/" title="点击更新" style="width: 150px; height: 30px">
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-10">
+				<button type="button" class="btn btn-default" id="ajaxSubmit">登陆</button><span id="errors" style="color: red"></span>
+				{{ errors }}
+			</div>
+		</div>
+	</form>
+</div>
+</body>
+<script src="/static/jquery-3.2.1.js"></script>
+<script>
+	/*验证码更换*/
+    function changeImg(self) {
+        self.src = self.src + "?";
+    }
+    	/*Ajax提交登陆*/
+    $("#ajaxSubmit").click(function () {
+        $.ajax({
+            url: '/login/',
+            type: 'POST',
+            data: $("#f1").serialize(),
+            dataType: 'JSON',
+            success: function (args) {
+                var prevLink = document.referrer;
+							/*获取登陆前的页面*/
+                if (args.status == true) {
+                    if ($.trim(prevLink) == '') {
+                        location.href = 'http://127.0.0.1:8000';
+                    } else {
+                        if (prevLink.indexOf('http://127.0.0.1:8000') == -1) {    //来自其它站点
+                            location.href = 'http://127.0.0.1:8000';
+                        }
+                        if (prevLink.indexOf('http://127.0.0.1:8000/login/') != -1) {      //来自注册页面
+                            location.href = 'http://127.0.0.1:8000';
+                        }
+                        location.href = prevLink;
+                    }
+                }else if(args.status == false){
+                    		$("#errors")[0].innerText=args.msg;
+										}else {
+                    		$(".errorInfo").remove();
+                        $.each(args.msg, function(index, value){
+                            var tag = document.createElement('span');
+                            tag.innerText = value[0];
+                            tag.className = 'errorInfo';
+                            $("#f1").find('input[name="'+index+'"]').after(tag);
+												})
+										}
+
+								}
+        })
+    })
+</script>
+</html>

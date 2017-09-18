@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>个人主页</title>
+	<link rel="stylesheet" href="/static/plugins/bootstrap-3.3.7-dist/css/bootstrap.css">
+	<link rel="stylesheet" href="/static/plugins/font-awesome-4.7.0/css/font-awesome.css">
+	<link rel="stylesheet" href="/static/css/theme/{{ blog_info.theme }}.css">
+</head>
+<body>
+<div class="container">
+	<h2>{{ blog_info.title }}</h2>
+</div>
+<div class="container page-nav">
+	<div class="col-md-6">
+		<ul>
+			<li><a href="/">首页</a></li>
+			<li><a href="/u/{{ blog_info.site }}/blog">个人首页</a></li>
+			<input class="hide" id="blogerId" type="text" value="{{ blog_info.user.nid }}"> {# 隐藏标签，存储当前博主id #}
+			<input class="hide" id="bloger" type="text" value="{{ blog_info.site }}"> {# 隐藏标签，存储当前博主url后缀 #}
+		</ul>
+	</div>
+
+	<div class="col-md-6">
+		<div class="navs">
+			{#	若有用户登录#}
+			{% if loginUserObj %}
+				<input class="hide" id="loggerId" type="text" value="{{ loginUserObj.nid }}">  {# 隐藏标签，存储当前登陆用户id #}
+				<ul>
+					<li><a href="/u/{{ loginUserObj.userName }}/info.html">{{ loginUserObj.userName }}</a></li>
+					<li><a href="/backend/">管理</a></li>
+					{#					若当前用户开通了博客#}
+					{% if loginUserObj.blog.site %}
+						<li><a href="/u/{{ loginUserObj.blog.site }}/blog">我的博客</a></li>
+						<input class="hide" id="loggerSite" type="text" value="{{ loginUserObj.blog.site }}">
+						{# 隐藏标签，存储当前登陆用户博客url后缀 #}
+					{% endif %}
+					<li><a href="/logout/">退出</a></li>
+				</ul>
+			{% else %}
+				<ul>
+					<li><a href="/login/">登陆</a></li>
+					<li><a href="/register/">注册</a></li>
+				</ul>
+			{% endif %}
+		</div>
+	</div>
+</div>
+
+<div class="container content">
+	<div class="col-md-3">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">公告</h3>
+			</div>
+			<div class="panel-body">
+				<li>昵称：<a href="/u/{{ blog_info.site }}/blog">{{ blog_info.user.nickName }}</a></li>
+				<li>粉丝：<a href="/u/{{ blog_info.site }}/fans">{{ user_info.fans }}</a></li>
+				<li>关注：<a href="/u/{{ blog_info.site }}/followers">{{ user_info.followers }}</a></li>
+				<li>邮箱：<a href="#">{{ blog_info.user.email }}</a></li>
+				<li>个性签名:我的剑，就是你的剑！</li>
+				{#			/*当前博主的粉丝*/#}
+				{#			{% for fans in blog_info.user.fans.all %}#}
+				{#			{{ fans }}#}
+				{#			{% endfor %}#}
+
+				{#			若登陆用户已关注该博主，显示 ‘已关注’，否则显示 ‘关注我’#}
+				{% if loginUserObj in blog_info.user.fans.all %}
+					<li>
+						<button class="btn btn-default" onclick="fans(0);" title="点击取消关注">已关注</button>
+					</li>
+				{% else %}
+					<li>
+						<button class="btn btn-default" onclick="fans(1)">关注我</button>
+					</li>
+				{% endif %}
+				<div id="avatar"><img src="{{ blog_info.user.avatar }}"></div>
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">随笔标签</h3>
+			</div>
+			<div class="panel-body border">
+				{% for tag in tags_list %}
+					{% if tag.tags__title == None %}
+						<li><a href="/u/{{ blog_info.site }}/tags/{{ tag.tags__title }}">无标签 ({{ tag.c }})</a></li>
+					{% else %}
+						<li><a href="/u/{{ blog_info.site }}/tags/{{ tag.tags__title }}">{{ tag.tags__title }} ({{ tag.c }})</a>
+						</li>
+					{% endif %}
+				{% endfor %}
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">随笔分类</h3>
+			</div>
+			<div class="panel-body border">
+				{% for cate in category_list %}
+					<li><a href="/u/{{ blog_info.site }}/category/{{ cate.category__title }}">{{ cate.category__title }}
+						({{ cate.c }})</a></li>
+				{% endfor %}
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">随笔档案</h3>
+			</div>
+			<div class="panel-body border">
+				{% for i in month_list %}
+					<li><a href="/u/{{ blog_info.site }}/date/{{ i.month }}"><span id="month">{{ i.month }}</span> ({{ i.number }})</a>
+					</li>
+					<input class="hide" id="date" type="text" value="{{ i.month }}">  {# 隐藏标签，存储当前博主文章按月份分类 #}
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+	<div class="col-md-8">
+
+
+		{% if article_list %}
+			{#			博文列表#}
+			{% for article in article_list %}
+				<div>
+					<div class="article-head">
+						<h4><a href="/{{ blog_info.site }}/article/{{ article.nid }}.html">{{ article.title }}</a></h4>
+						<div class="article-body clearfix">
+							<div>{{ article.summary }}</div>
+						</div>
+						<div class="article-footer">
+							<span>发布于 {{ article.createTime|date:"Y-m-d H:i:s" }}</span>
+							<span><a href="/{{ blog_info.site }}/article/{{ article.nid }}.html"><i class="fa fa-tripadvisor"
+																																											aria-hidden="true"></i>阅读 {{ article.readCount }}</a></span>
+							<span><a href="/{{ blog_info.site }}/article/{{ article.nid }}.html"><i class="fa fa-commenting-o"
+																																											aria-hidden="true"></i>评论 {{ article.commentCount }}</a></span>
+							<span><a href="/{{ blog_info.site }}/article/{{ article.nid }}.html"><i class="fa fa-thumbs-o-up"
+																																											aria-hidden="true"></i>点赞 {{ article.upCount }}</a></span>
+							<span><a href="/{{ blog_info.site }}/article/{{ article.nid }}.html"><i class="fa fa-pencil-square-o"
+																																											aria-hidden="true"></i>编辑</a></span>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+			{#			博文详情#}
+		{% else %}
+			{#			博文标题#}
+			<div class="article-head">
+				<h3>{{ article_info.title }}</h3>
+				<input class="hide" id="articleId" type="text" value="{{ article_info.nid }}"> {# 隐藏标签，存储当前博文id #}
+			</div>
+			{#			博文内容#}
+			<div class="article-content">
+				<p>{{ article_info.articledetail.content|safe }}</p>
+			</div>
+			{#			点赞情况#}
+			<div class="text-center thumb clearfix">
+				<input class="hide" id="thumbType" type="text" value="{{ upDown.up }}"> {# 隐藏标签，存储当前登陆用户对该博文的赞踩状态 #}
+				<div>
+					<i id="thumbUp" class="fa fa-thumbs-o-up fa-5x darkGrey" aria-hidden="true"></i>
+					<p><span id="thumbUpContent">赞一下</span> (<span id="upCount">{{ article_info.upCount }}</span>)</p>
+				</div>
+				<div>
+					<i id="thumbDown" class="fa fa-thumbs-o-down fa-5x darkGrey" aria-hidden="true"></i>
+					<p><span id="thumbDownContent">踩一下</span> (<span id="downCount">{{ article_info.downCount }}</span>)</p>
+				</div>
+			</div>
+			{#			博文属性（分类，标签，发表时间，作者等）#}
+			<div class="blogInfo">
+				<h4>
+					分类：<a href="/u/{{ blog_info.site }}/category/{{ article_info.category }}">{{ article_info.category }}</a>
+				</h4>
+				<p>标签：
+					{% for tag in article_info.tags.all %}
+						<a href="/u/{{ blog_info.site }}/tags/{{ tag }}">{{ tag }}</a>
+					{% endfor %}
+				</p>
+				<p>
+					posted @ {{ article_info.createTime|date:"Y-m-d H:i:s" }}
+					<span>作者 <a href="/u/{{ blog_info.site }}/blog"><i>{{ blog_info.user.nickName }}</i></a></span>
+					<span><i class="fa fa-tripadvisor" aria-hidden="true"></i> 阅读 ({{ article_info.readCount }})</span>
+					<span><i class="fa fa-commenting-o" aria-hidden="true"></i> 评论 ({{ article_info.commentCount }})</span>
+				</p>
+			</div>
+			{#			前后文章#}
+			<div class="nextArticle">
+				{% if preArticle %}
+					<p><a href="/{{ blog_info.site }}/article/{{ preArticle.nid }}.html">上一篇：{{ preArticle.title }}</a></p>
+				{% endif %}
+				{% if  nextArticle %}
+					<p><a href="/{{ blog_info.site }}/article/{{ nextArticle.nid }}.html">下一篇：{{ nextArticle.title }}</a></p>
+				{% endif %}
+			</div>
+
+			{#			博文评论列表#}
+			<div class="well comment-list">
+				<h4>评论列表</h4>
+				{% if comments %}
+					<div class="multiComments">
+					</div>
+				{% else %}
+					<p>暂无评论</p>
+				{% endif %}
+			</div>
+
+			{#			发表评论#}
+			<form id="blogComment">
+				{% csrf_token %}
+				<div class="well submit-comment">
+					<h4>发表评论</h4>
+					<p>昵称：<input class="form-control" type="text" placeholder="{{ loginUserObj.nickName }}" readonly></p>
+					<p>评论内容：</p>
+					<div>
+						<input class="hide" type="text" value="{{ article_info.nid }}" name="articleId"> {# 隐藏标签，存储当前博文id #}
+						<input class="hide" type="text" value="{{ loginUserObj.nid }}" name="commenter"> {# 隐藏标签，存储当前登陆用户id #}
+						<input class="hide" id="reply" type="text" name="replyId"> {# 隐藏标签，存储被回复用户id #}
+						<textarea name="comments" id="comments" cols="30" rows="10" placeholder="请写下您的评论"></textarea>
+					</div>
+					<button class="btn btn-default" id="ajaxSubmit" type="button">发表评论</button>
+				</div>
+			</form>
+		{% endif %}
+
+		{#分页#}
+		{% if page_info %}
+			<div class="text-center">
+
+				<nav aria-label="Page navigation">
+					<ul class="pagination">
+						{{ page_info.pager|safe }}
+					</ul>
+				</nav>
+			</div>
+		{% else %}
+		{% endif %}
+	</div>
+</div>
+
+<!-- 模态弹出窗 -->
+<div class="modal fade" id="mymodal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+								class="sr-only">Close</span></button>
+				<h4 class="modal-title">请先登陆</h4>
+			</div>
+			<div class="modal-body">
+				<p>登陆后才可以操作！</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				<a href="/login/">
+					<button type="button" class="btn btn-default">登陆</button>
+				</a>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+</body>
+<script src="/static/jquery-3.2.1.js"></script>
+<script src="/static/plugins/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script>
+
+    var blogerId = $("#blogerId").val();
+		/*当前博主id*/
+    var blogerSite = $("#bloger").val();
+		/*当前博主url后缀*/
+    var loggerId = $("#loggerId").val();
+		/*当前登陆用户id*/
+    var loggerSite = $("#loggerSite").val();
+		/*当前登陆用户url后缀*/
+    var articleId = $("#articleId").val();
+		/*当前博文id*/
+    {#		var thumbType = $("#thumbType").val();	/*当前登陆用户对该博文的赞踩状态* ****不能写在这里，需要在函数中动态获取/#}
+    console.log(blogerId, blogerSite, loggerId, loggerSite, articleId, $("#thumbType").val());
+
+
+    $(function () {
+			/*自定义字符串格式化*/
+        String.prototype.Format = function (args) {
+            /*this代表要调用Format方法的字符串*/
+            /*replace的第一个参数为正则表达式，g表示处理匹配到的所有字符串，在js中使用//包起来*/
+            /*replace的第二个参数为匹配字符串的处理，k1匹配结果包含{}，k2只保留{}内的内容*/
+            var temp = this.replace(/\{(\w+)\}/g, function (k1, k2) {
+{#                console.log(k1, k2);#}
+                /*replace将匹配到的k2用参数args替换后赋给新变量temp*/
+                return args[k2];
+            });
+            /*自定义方法Format将格式化后的字符串返回*/
+            return temp;
+        };
+
+			/*格式化时间字符串*/
+        var date = $("#date").val().split('-');
+        $("#month")[0].innerText = date[0] + '年' + date[1] + '月';
+
+        if ($("#thumbType").val() == 'True') {    /*如果为True，说明该用户已经点过赞*/
+            $("#thumbUp").addClass('uped');
+            $("#thumbUpContent")[0].innerText = '已赞过';
+
+        } else if ($("#thumbType").val() == 'False') {    /*如果为False，说明该用户已经踩过*/
+            $("#thumbDown").addClass('downed');
+            $("#thumbDownContent")[0].innerText = '已踩过';
+        };
+
+        var divs = document.getElementsByClassName('multiComments')[0];
+        var comments = {{ comments|safe }};
+        console.log(comments);
+
+        function commp(arry, divs) {
+            for (var i = 0; i < arry.length; i++) {
+                var p = '{{ article_info.blog.user}}';
+                var a = '{{loginUserObj }}';
+                var tag = document.createElement('div');
+                if (p == a || arry[i].user == a) {
+                    if (arry[i].site) {
+                        tag.innerHTML = '<p><a href="/u/' + arry[i].site + '/blog">' + arry[i].nickName + '</a>&nbsp&nbsp&nbsp&nbsp' + arry[i].createTime + '<a onclick="reply(this);" nid="' + arry[i].id + '" name="' + arry[i].nickName + '">回复</a> <a onclick="delComment(this);" commentId="' + arry[i].id + '">删除</a> </p> <p>' + arry[i].content + '</p>';
+                    } else {
+                        tag.innerHTML = '<p>' + arry[i].nickName + '&nbsp&nbsp&nbsp&nbsp' + arry[i].createTime + '<a onclick="reply(this);" nid="' + arry[i].id + '" name="' + arry[i].nickName + '">回复</a> <a onclick="delComment(this);" commentId="' + arry[i].id + '">删除</a> </p> <p>' + arry[i].content + '</p>';
+                    }
+                } else {
+                    if (arry[i].site) {
+                        tag.innerHTML = '<p><a href="/u/' + arry[i].site + '/blog">' + arry[i].nickName + '</a>&nbsp&nbsp&nbsp&nbsp' + arry[i].createTime + '<a onclick="reply(this);" nid="' + arry[i].id + '" name="' + arry[i].nickName + '">回复</a></p> <p>' + arry[i].content + '</p>';
+                    } else {
+                        tag.innerHTML = '<p>' + arry[i].nickName + '&nbsp&nbsp&nbsp&nbsp' + arry[i].createTime + '<a onclick="reply(this);" nid="' + arry[i].id + '" name="' + arry[i].nickName + '">回复</a></p> <p>' + arry[i].content + '</p>';
+                    }
+                }
+                tag.style = "position: relative; left: 25px";
+                divs.appendChild(tag);
+                if (arry[i].child.length) {
+                    commp(arry[i].child, tag);
+                }
+            }
+        }
+        commp(comments, divs);
+    });
+		/*点赞*/
+    $("#thumbUp").click(function () {
+        if (loggerId) {  /*若用户已登陆*/
+            console.log(loggerId);
+            if ($("#thumbType").val() == 'True') {  /*撤销点赞*/
+                $.ajax({
+                    url: '/thumb/',
+                    type: 'GET',
+                    data: {'type': 'undoUp', 'article': articleId, 'loggerId': loggerId},
+                    dataType: 'JSON',
+                    success: function (args) {
+                        console.log(args);
+                        $("#thumbUp").removeClass('uped');
+                        $("#thumbUpContent")[0].innerText = '赞一下';
+                        $("#upCount")[0].innerText = args.upThumb;
+                        $("#thumbType").val('');
+											/*恢复为没有任何操作*/
+                    }
+                })
+            } else if ($("#thumbType").val() == '') {  /*若用户之前没有点赞且没有踩过，可以点赞*/
+                $.ajax({
+                    url: '/thumb/',
+                    type: 'GET',
+                    data: {'type': 'up', 'article': articleId, 'loggerId': loggerId},
+                    dataType: 'JSON',
+                    success: function (args) {
+                        console.log(args);
+                        if (args.status == 'true') {
+                            $("#thumbUp").addClass('uped');
+                            $("#thumbUpContent")[0].innerText = '已赞过';
+                            $("#upCount")[0].innerText = args.upThumb;
+                            $("#thumbType").val('True');
+                        } else {
+                            window.alert(args.errors)
+                        }
+                    }
+                })
+            } else {
+                console.log($("#thumbType").val());
+            }
+        } else {
+            $("#mymodal").modal();
+        }
+    });
+		/*踩*/
+    $("#thumbDown").click(function () {
+        if (loggerId) {  /*若用户已登陆*/
+            if ($("#thumbType").val() == 'False') {    /*撤销踩*/
+                $.ajax({
+                    url: '/thumb/',
+                    type: 'GET',
+                    data: {'type': 'undoDown', 'article': articleId, 'loggerId': loggerId},
+                    dataType: 'JSON',
+                    success: function (args) {
+                        $("#thumbDown").removeClass('downed');
+                        $("#thumbDownContent")[0].innerText = '踩一下';
+                        $("#downCount")[0].innerText = args.downThumb;
+                        $("#thumbType").val('');
+                    }
+                })
+            } else if ($("#thumbType").val() == '') {
+                $.ajax({
+                    url: '/thumb/',
+                    type: 'GET',
+                    data: {'type': 'down', 'article': articleId, 'loggerId': loggerId},
+                    dataType: 'JSON',
+                    success: function (args) {
+                        if (args.status == 'true') {
+                            $("#thumbDown").addClass('downed');
+                            $("#thumbDownContent")[0].innerText = '已踩过';
+                            $("#downCount")[0].innerText = args.downThumb;
+                            $("#thumbType").val('False');
+                        } else {
+                            window.alert(args.errors)
+                        }
+                    }
+                })
+            }
+        } else {
+            $("#mymodal").modal();
+        }
+    });
+		/*回复评论*/
+    function reply(self) {
+        var nid = $(self).attr('nid');
+        var name = $(self).attr('name');
+        $("#reply").val(nid);
+        $("#comments").attr('placeholder', '回复给：' + name);
+    }
+		/*提交评论*/
+    $("#ajaxSubmit").click(function () {
+        if (loggerId) {  /*若用户已登陆*/
+            $.ajax({
+                url: '/postComment/',
+                type: 'POST',
+                data: $("#blogComment").serialize(),
+                dataType: 'JSON',
+                success: function (args) {
+                    console.log(args);
+                    if (args.status == true) {
+                        location.reload();
+                    }
+                }
+            })
+        } else {
+            $("#mymodal").modal();
+        }
+    });
+		/*删除评论*/
+    function delComment(self) {
+        var csrf = $("body").find('input[name="csrfmiddlewaretoken"]').val();
+        var id = $(self).attr('commentId');
+        console.log(csrf, id);
+        $.ajax({
+            url: '/delComment/',
+            type: 'POST',
+            data: {'commentId': id, "csrfmiddlewaretoken": csrf},
+            success: function (args) {
+                location.reload();
+            }
+        })
+    }
+		/*关注或取关*/
+    function fans(type) {
+        if (loggerId) {  /*若用户已登陆*/
+            $.ajax({
+                url: '/fans/',
+                type: 'GET',
+                data: {'type': type, 'blogerId': blogerId, 'loggerId': loggerId},
+                success: function (args) {
+                    location.reload();
+                }
+            })
+        } else {
+            $("#mymodal").modal();
+        }
+    }
+</script>
+</html>

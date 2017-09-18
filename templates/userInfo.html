@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>User Info</title>
+	<link rel="stylesheet" href="/static/plugins/bootstrap-3.3.7-dist/css/bootstrap.css">
+</head>
+<body>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">公告</h3>
+				<h3 class="panel-title"><a href="/">首页</a></h3>
+			</div>
+			<div class="panel-body">
+				<li>昵称：<a href="/u/{{ blog_info.site }}/blog">{{ userInfoObj.nickName }}</a></li>
+				<li>粉丝：<a href="/u/{{ blog_info.site }}/fans">{{ userInfoObj.fans }}</a></li>
+				<li>关注：<a href="/u/{{ blog_info.site }}/followers">{{ user_info.followers }}</a></li>
+				<li>邮箱：<a href="#">{{ userInfoObj.email }}</a></li>
+				<li>个性签名</li>
+				<div id="avatar"><img src="{{ userInfoObj.avatar }}" alt=""></div>
+			</div>
+		</div>
+</body>
+</html>

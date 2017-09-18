@@ -1,0 +1,153 @@
+{% extends 'backend.html' %}
+{% block content %}
+
+<div class="col-md-10">
+	<div>
+		<ol class="breadcrumb">
+			<li><a href="#">博客管理</a></li>
+			<li class="active">文章筛选</li>
+		</ol>
+	</div>
+	<div>
+		<ol class="breadcrumb">
+			<i class="fa fa-search" aria-hidden="true"></i> <span>搜索条件</span>
+						<a class="btn btn-default" href="/article-0-0-0.html" role="button">所有文章</a>
+		</ol>
+	</div>
+{#	内容区#}
+	<div style="margin-left: 20px">
+		<div class="article article-type">
+			文章主类：
+			{% if kwargs.articleTypeId == 0 %}
+				<a class="selected" href="/article-0-{{ kwargs.category_id }}-{{ kwargs.tags__nid }}.html">全部</a>
+			{% else %}
+				<a href="/article-0-{{ kwargs.category_id }}-{{ kwargs.tags__nid }}.html">全部</a>
+			{% endif %}
+			{% for row in type_list %}
+				{% if row.0 == kwargs.articleTypeId %}
+					<a class="selected"
+						 href="/article-{{ row.0 }}-{{ kwargs.category_id }}-{{ kwargs.tags__nid }}.html">{{ row.1 }}</a>
+				{% else %}
+					<a href="/article-{{ row.0 }}-{{ kwargs.category_id }}-{{ kwargs.tags__nid }}.html">{{ row.1 }}</a>
+				{% endif %}
+			{% endfor %}
+		</div>
+		<div class="article article-category">
+			个人主类：
+			{% if kwargs.category_id == 0 %}
+				<a class="selected" href="/article-{{ kwargs.articleTypeId }}-0-{{ kwargs.tags__nid }}.html">全部</a>
+			{% else %}
+				<a href="/article-{{ kwargs.articleTypeId }}-0-{{ kwargs.tags__nid }}.html">全部</a>
+			{% endif %}
+			{% for row in category_list %}
+				{% if row.nid == kwargs.category_id %}
+					<a class="selected"
+						 href="/article-{{ kwargs.articleTypeId }}-{{ row.nid }}-{{ kwargs.tags__nid }}.html">{{ row.title }}</a>
+				{% else %}
+					<a href="/article-{{ kwargs.articleTypeId }}-{{ row.nid }}-{{ kwargs.tags__nid }}.html">{{ row.title }}</a>
+				{% endif %}
+			{% endfor %}
+		</div>
+		<div class="article article-tag">
+			个人标签：
+			{% if kwargs.tags__nid == 0 %}
+				<a class="selected" href="/article-{{ kwargs.articleTypeId }}-{{ kwargs.category_id }}-0.html">全部</a>
+			{% else %}
+				<a href="/article-{{ kwargs.articleTypeId }}-{{ kwargs.category_id }}-0.html">全部</a>
+			{% endif %}
+			{% for row in tag_list %}
+				{% if row.nid == kwargs.tags__nid %}
+					<a class="selected"
+						 href="/article-{{ kwargs.articleTypeId }}-{{ kwargs.category_id }}-{{ row.nid }}.html">{{ row.title }}</a>
+				{% else %}
+					<a href="/article-{{ kwargs.articleTypeId }}-{{ kwargs.category_id }}-{{ row.nid }}.html">{{ row.title }}</a>
+				{% endif %}
+			{% endfor %}
+		</div>
+	</div>
+	<div class="top" style="margin-top: 20px">
+		<ol class="breadcrumb">
+			<i class="fa fa-th" aria-hidden="true"></i> <span>搜索文章（{{ all_count }}）篇</span>
+			<a href="/article/add">添加文章</a>
+		</ol>
+	</div>
+		筛选文章列表
+	<div class="">
+		<table class="table table-hover">
+			<tr>
+				<th>文章标题</th>
+				<th>评论数</th>
+				<th>阅读数</th>
+				<th colspan="2" align="center">操作</th>
+			</tr>
+			<tbody>
+			{% for article in article_list %}
+				<tr>
+					<td><a href="/{{ loginerInfo.blog.site }}/article/{{ article.nid }}.html">{{ article.title }}</a></td>
+					<td>{{ article.commentCount }}</td>
+					<td>{{ article.readCount }}</td>
+					<td><a href="/article/edit/?nid={{ article.nid }}">编辑</a></td>
+					<td><a onclick="showModal({{ article.nid }}, '{{ article.title }}')">删除</a></td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- 模态弹出窗 -->
+<div class="modal fade" id="mymodal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+								class="sr-only">Close</span></button>
+				<h4 class="modal-title">提示</h4>
+			</div>
+			<div class="modal-body">
+				<p>确定要删除《<span id="articleTitle"></span>》吗？</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-default" onclick="delArticle()">删除</button>
+				<input type="text" class="hide" id="articleId">
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+{#分页#}
+{% if page_info %}
+	<div class="text-center">
+
+		<nav aria-label="Page navigation">
+			<ul class="pagination">
+				{{ page_info.pager|safe }}
+			</ul>
+		</nav>
+	</div>
+{% else %}
+{% endif %}
+{% endblock %}
+
+{% block js %}
+	<script>
+		function showModal(articleId, articleTitle) {
+				$("#mymodal").modal();
+				$("#articleId").val(articleId);
+				$("#articleTitle")[0].innerText=articleTitle;
+    }
+		function delArticle() {
+		    var articleId = $("#articleId").val();
+		    var urls = '/article/del/?articleId='+ articleId;
+		    console.log(urls);
+				$.ajax({
+				    url: urls,
+						type: 'GET',
+						success: function (args) {
+								location.reload();
+            }
+				})
+    }
+	</script>
+{% endblock %}

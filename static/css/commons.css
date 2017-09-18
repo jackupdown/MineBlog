@@ -1,0 +1,24 @@
+.no-radius {
+    border-radius: 0!important;
+}
+.left {
+    position: relative;
+    left: 30px;
+}
+.right {
+    position: relative;
+    right: -100px;
+}
+.article a {
+    display: inline-block;
+    padding: 5px;
+}
+.selected {
+    height: 25px;
+    line-height: 20px;
+    background-color: #31b0d5;
+    color: white;
+}
+.breadcrumb span {
+    color: #337ab7;
+}

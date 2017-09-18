@@ -1,0 +1,82 @@
+{% extends 'backend.html' %}
+{% block css %}
+	<style>
+	.no-float {
+		float: none;
+	}
+	.thirty-width {
+		width: 60%;
+	}
+	.content {
+		margin-bottom: 50px;
+	}
+
+	</style>
+{% endblock %}
+{% block content %}
+
+	<div class="col-md-10 content">
+	{#	路径导航条#}
+	<ol class="breadcrumb">
+		<li><a href="/backend/">博客管理</a></li>
+		<li><a href="/article-0-0-0.html">文章筛选</a></li>
+		<li class="active">添加文章</li>
+	</ol>
+
+	<form class="" method="POST" action="/article/add/" novalidate>
+		{% csrf_token %}
+{#	/*文章标题*/#}
+		<div class="form-group">
+			<label class="col-sm-2 control-label no-float">文章标题</label>
+				{{ obj.title }} {{ obj.errors.title.0 }}
+		</div>
+		{#	/*文章内容*/#}
+		<div class="form-group">
+			<label class="col-sm-2 control-label no-float">文章内容</label>
+				{{ obj.content }} {{ obj.errors.content.0 }}
+		</div>
+		{#	/*文章类型*/#}
+		<div class="form-group">
+			<label class="col-sm-2 control-label no-float">文章类型</label>
+				{{ obj.type }} {{ obj.errors.type.0 }}
+		</div>
+		{#	/*个人文章分类*/#}
+		<div class="form-group">
+			<label class="col-sm-2 control-label no-float">文章分类</label>
+				{{ obj.category }} {{ obj.errors.category.0 }}
+		</div>
+		{#	/*个人文章标签*/#}
+		<div class="form-group">
+			<label class="col-sm-2 control-label no-float">文章标签</label>
+					{{ obj.tags }} {{ obj.errors.tags.0 }}
+		</div>
+
+		<input type="submit" value="提交">
+
+	</form>
+	</div>
+{% endblock %}
+
+{% block js %}
+	<script src="/static/plugins/kindeditor-4.1.10/kindeditor-all-min.js"></script>
+	<script>
+      $(function () {
+          initKindEditor();
+          $("#id_tags").addClass('list-inline');
+      });
+      function initKindEditor() {
+          var kind = KindEditor.create("#id_content", {
+              'width': '60%',
+							'height': '300px',
+							'minWidth': '300px',
+							'minHeight': '150px',
+							'resizeType': 1,
+							'uploadJson': '/upload.html',
+							'extraFileUploadParams': {
+                   "csrfmiddlewaretoken": "{{ csrf_token }}"
+							}
+
+					})
+      }
+	</script>
+{% endblock %}
