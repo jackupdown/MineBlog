@@ -66,4 +66,6 @@ function changImg(self) {
 ![](https://github.com/jackupdown/MineBlog/raw/master/mdPic/comments.png)
 * 博文筛选
 ![](https://github.com/jackupdown/MineBlog/raw/master/mdPic/backend.png)
+* 博文编辑
+![](https://github.com/jackupdown/MineBlog/raw/master/mdPic/edit.png)
 
