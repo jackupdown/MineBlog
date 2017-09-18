@@ -49,6 +49,10 @@ function changImg(self) {
 ```
 * Bootstrap及FontAwesome美化
 
+## 测试账户
+* Admin账户：root；pwd：123456
+* 博主账户：jack；pwd：12345678
+
 ## 部分页面展示
 * 注册页面
 ![](https://github.com/jackupdown/MineBlog/raw/master/mdPic/register.png)
